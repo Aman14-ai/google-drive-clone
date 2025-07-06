@@ -1,0 +1,7 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "terminal.integrated.cursorStyle": "block",
+  "terminal.integrated.cursorBlinking": true
+}
