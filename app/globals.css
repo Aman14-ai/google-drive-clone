@@ -2,6 +2,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
 * {
 
   box-sizing: border-box;
@@ -268,6 +269,7 @@
   .nav-icon-active {
     @apply invert-0 opacity-100   ;
   }
+
 
   /* =====  STYLE CLASSES */
 
