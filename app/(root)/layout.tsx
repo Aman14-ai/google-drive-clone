@@ -17,11 +17,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <>
             <SidebarProvider className="">
                 <AppSidebar {...currentUser} />
-                <SidebarTrigger className="block md:hidden lg:hidden "  />    
+                {/* <SidebarTrigger className="block md:hidden lg:hidden "  />     */}
                 <div className=" w-full">
-                    <MobileNavigation />
+                    <MobileNavigation {...currentUser} />
                     <Header />
-                    <div className="main-content">{children}</div>
+                    <div className="main-content max-sm:mt-40">{children}</div>
                 </div>
             </SidebarProvider>
         </>

@@ -74,7 +74,7 @@ const OTPModal = ({ email, accountId }: { email: string, accountId: string }) =>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Verify Your OTP</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Please check your email <span className='text-brand'>{email}</span> for OTP. If it is not there please check your spam folder.
+                        Please check your email <span className='text-brand'>{email}</span> for OTP.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 

@@ -89,7 +89,7 @@ export function AppSidebar({fullName, email , avatar}:Props) {
               <SidebarMenuItem className="flex flex-col gap-4 items-center">
                 <Image src={"/assets/images/files-2.png"} width={214} height={"122"} alt={"file"} />
                 <div className="flex items-center gap-2">
-                  <Image src={avatar as string} width={40} height={"40"} alt={"avatar"} />
+                  <Image src={avatar as string || "/assets/images/avatar.png"} width={40} height={"40"} alt={"avatar"} />
                   <div>
                     <span className="font-semibold">{fullName}</span>
                     <p className="text-xs text-gray-500">{email}</p>

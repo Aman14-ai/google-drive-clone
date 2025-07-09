@@ -8,6 +8,13 @@
   box-sizing: border-box;
 }
 
+@media (max-width:767px)
+{
+  .hide{
+    display: none;
+  }
+}
+
 @theme {
   --color-brand: #fbbc04;
   --color-brand-100:#fbbc04a3 ;

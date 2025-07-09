@@ -5,6 +5,8 @@ import { appwriteConfig } from "../appwrite/config";
 import { createAdminClient, createSessionClient } from "../appwrite/index";
 import { parseStringify } from "../utils";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { send } from "process";
 
 const handleError = (error: unknown, msg: string) => {
     console.log(msg);
@@ -115,5 +117,37 @@ export const getCurrentUser = async() => {
     catch (error) {
         handleError(error, "Error in lib/actions/user.action.ts in getCurrentUser function in catch block");
         console.log(error);
+    }
+}
+
+export const signOutUser = async() => {
+    try {
+        const {account} = await createSessionClient();
+        await account.deleteSession('current'); // Deletes the current session
+        (await cookies()).delete('appwrite-session');
+        console.log("User signed out successfully.");
+    } 
+    catch (error) {
+        handleError(error, "Error in lib/actions/user.action.ts in signOutUser function in catch block");
+        throw new Error("Failed to sign out user.");    
+    }
+    finally{
+        redirect('/sign-in');
+    }
+}
+
+export const signInUser = async({email}: {email:string}) =>{
+    try {
+        const existingUser = await getUserByEmail(email);
+        if(existingUser)
+        {
+            await sendEmailOTP({email});
+            return parseStringify({accountId: existingUser.accountId});
+        }
+        return parseStringify({accountId: null , error: "User not found."});
+    } 
+    catch (error) {
+        handleError(error, "Error in lib/actions/user.action.ts in signInUser function in catch block");
+        throw new Error("Failed to sign in user.");    
     }
 }
