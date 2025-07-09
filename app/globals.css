@@ -495,7 +495,7 @@
     @apply text-[16px] leading-[24px] font-semibold mt-9 flex-1 gap-1 text-brand   ;
   }
   .sidebar-nav-item {
-    @apply flex text-light-100 gap-4 rounded-xl lg:w-full justify-center lg:justify-start items-center text-[16px] leading-[24px] font-semibold lg:px-[30px] h-[52px] lg:rounded-full   ;
+    @apply flex text-light-100 rounded-xl lg:w-full justify-center lg:justify-start items-center text-[16px] font-semibold lg:px-[30px] h-[52px] lg:rounded-full   ;
   }
   .sidebar-user-info {
     @apply mt-4 flex items-center justify-center gap-2 rounded-full bg-brand/10 p-1 text-light-100 lg:justify-start lg:p-3   ;

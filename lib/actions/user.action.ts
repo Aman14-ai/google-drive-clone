@@ -2,7 +2,7 @@
 
 import { ID, Query } from "node-appwrite";
 import { appwriteConfig } from "../appwrite/config";
-import { createAdminClient } from "../appwrite/index";
+import { createAdminClient, createSessionClient } from "../appwrite/index";
 import { parseStringify } from "../utils";
 import { cookies } from "next/headers";
 
@@ -98,5 +98,22 @@ export const verifySecret = async({accountId , password}: {accountId:string , pa
     catch (error) {
         handleError(error, "Error in lib/actions/user.action.ts in verifySecret function in catch block");
         throw new Error("Failed to verify secret.");
+    }
+}
+
+export const getCurrentUser = async() => {
+    try 
+    {
+        const {databases , account} = await createSessionClient();  
+        const results = await account.get();  
+        const user = await databases.listDocuments(appwriteConfig.databaseId ,appwriteConfig.usersCollectionId , [Query.equal('accountId' , results.$id)]);
+        //console.log("User from getCurrentUser: ", user);
+        if(user.total <= 0) return null;
+        return parseStringify(user.documents[0]);
+
+    } 
+    catch (error) {
+        handleError(error, "Error in lib/actions/user.action.ts in getCurrentUser function in catch block");
+        console.log(error);
     }
 }

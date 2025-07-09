@@ -29,7 +29,7 @@ export const createSessionClient = async () => {
     }
     catch (error) {
         console.log("Error coming from file lib/appwrite/index.ts in  catch block while creating session client: ", error);
-
+        throw new Error("Failed to create appwrite client.");
     }
 
 }
