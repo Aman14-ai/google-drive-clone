@@ -1,8 +1,12 @@
 import { ReactNode } from "react";
 import Image from 'next/image'
 import NamedLogo from "@/utils/NamedLogo";
+import { getCurrentUser } from "@/lib/actions/user.action";
+import { redirect } from "next/navigation";
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+    const currentUser = await getCurrentUser();
+    if(currentUser) return redirect("/")
     return (
         <div className="flex min-h-screen">
 
