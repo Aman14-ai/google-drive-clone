@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { send } from "process";
 
-const handleError = (error: unknown, msg: string) => {
+export const handleError = async(error: unknown, msg: string) => {
     console.log(msg);
     console.log(error)
 }

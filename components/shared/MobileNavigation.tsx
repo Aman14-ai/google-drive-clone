@@ -26,6 +26,8 @@ type Props = {
   fullName?: string;
   email?: string;
   avatar?: string;
+  $id: string;
+  accountId: string
 }
 
 const items = [
@@ -57,7 +59,7 @@ const items = [
 
 ]
 
-const MobileNavigation = ({ fullName, email, avatar }: Props) => {
+const MobileNavigation = ({ fullName, email, avatar , $id:ownerId , accountId }: Props) => {
 
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
@@ -108,7 +110,7 @@ const MobileNavigation = ({ fullName, email, avatar }: Props) => {
           </div>
 
           <div className="flex flex-col justify-between gap-5 pb-5 ">
-            <FileUploader />
+            <FileUploader ownerId={ownerId} accountId={accountId} />
             <Button
               type="submit"
               className="mobile-sign-out-button cursor-pointer"

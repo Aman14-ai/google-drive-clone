@@ -6,20 +6,43 @@ import { cn, convertFileToUrl, getFileType } from '@/lib/utils'
 import Image from 'next/image'
 import Thumbnail from './Thumbnail'
 import { X } from 'lucide-react'
+import { MAX_FILE_SIZE } from '@/constants'
+import { toast } from 'sonner';
+import { uploadFile } from '@/lib/actions/file.action'
+import { usePathname } from 'next/navigation'
 
 
 type Props = {
-  ownerId?: string;
-  accountId?: string;
+  ownerId: string;
+  accountId: string;
   className?: string;
 }
 const FileUploader = ({ ownerId, accountId, className }: Props) => {
+  const path = usePathname();
   const [files, setFiles] = useState<File[]>([])
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    setFiles(acceptedFiles)
+  //////////////////////////////////////////////////// upload file functionality
 
-  }, [])
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    setFiles(acceptedFiles);
+    const uploadPromises = acceptedFiles.map(async(file) => {
+      if(file.size > MAX_FILE_SIZE)
+      {
+        setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
+        toast.error(`${file.name} is too large. Maximum file size is 50MB`);
+      }
+      return uploadFile({file , ownerId , accountId , path}).then((uploadedFile) => {
+        if(uploadedFile)
+        {
+          setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
+          toast.success(`${file.name} uploaded successfully.`);
+        }
+      })
+    })
+    await Promise.all(uploadPromises);
+  }, [ownerId , accountId , path])
+
+  ///////////////////////////////////////////////////////////////////
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
@@ -36,16 +59,17 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
   }
 
   return (
-    <div {...getRootProps()} className='cursor-pointer px-4 py-2'>
-      <input {...getInputProps()} />
+    <div {...getRootProps()} className='cursor-pointer px-4 py-2 '>
+      <input {...getInputProps()} className='cursor-pointer' />
       <Button type="button" className={cn("uploader-button", className)}>
         <Image
           src="/assets/icons/upload.svg"
           alt="upload"
-          width={24}
+          width={24} 
           height={24}
+          className='cursor-pointer'
         />{" "}
-        <p>Upload</p>
+        <p className='cursor-pointer'>Upload</p>
       </Button>
 
       {
@@ -105,11 +129,6 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
         )
       }
 
-      {
-        isDragActive ?
-          <p>Drop the files here ...</p> :
-          <p>Drag 'n' drop some files here, or click to select files</p>
-      }
     </div>
   )
 }
