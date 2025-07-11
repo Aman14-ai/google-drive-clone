@@ -1,11 +1,11 @@
 import React from 'react'
 
-const page = () => {
+const Sort = () => {
   return (
     <div>
-      documents
+      sort
     </div>
   )
 }
 
-export default page
+export default Sort

@@ -69,7 +69,7 @@ export function AppSidebar({fullName, email , avatar}:Props) {
                 <SidebarMenuItem key={item.title} className={cn("sidebar-nav-item", pathname === item.url && "shad-active")}>
                   <SidebarMenuButton asChild>
                     <a href={item.url} >
-                      <div className="flex items-center space-x-3 text-sm text-gray-700 hover:text-[#0385ff] transition-colors">
+                      <div className="flex items-center space-x-3 text-sm text-gray-700  transition-colors">
                         <item.icon className="size-5 text-black/40" />
                         <span className="text-[1rem] font-semibold">{item.title}</span>
                       </div>
