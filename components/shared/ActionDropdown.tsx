@@ -26,6 +26,7 @@ import { Input } from '../ui/input'
 import { DialogClose } from '@radix-ui/react-dialog'
 import { renameFile } from '@/lib/actions/file.action'
 import { usePathname } from 'next/navigation'
+import { FileDetails } from './ActionDetails'
 
 const ActionDropdown = ({ file }: { file: Models.Document }) => {
     const pathname= usePathname();
@@ -86,6 +87,9 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
                             onChange={(e) => setName(e.target.value)}
                             className="selection:bg-brand-100 selection:text-black"
                         />
+                    }
+                    {
+                        value === 'details' && <FileDetails file={file} />
                     }
                 </DialogHeader>
                 {
