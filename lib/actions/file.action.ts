@@ -72,3 +72,17 @@ export const getFiles = async() => {
         handleError(error , "Error in lib/actions/file.action.ts in getFiles function in catch block");    
     }
 }
+
+export const renameFile = async({fileId , name , extension, path}: RenameFileProps) => {
+    try {
+        const {databases} = await createAdminClient();
+        const newName = `${name}.${extension}`;
+        const updatedFile = await databases.updateDocument(appwriteConfig.databaseId , appwriteConfig.filesCollectionId , fileId , {name: newName});
+        revalidatePath(path)
+        return parseStringify(updatedFile);
+    } 
+    catch (error) {
+        handleError(error, "Error in lib/actions/file.action.ts in renameFile function in catch block");
+
+    }
+}

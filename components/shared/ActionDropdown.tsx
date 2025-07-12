@@ -24,8 +24,11 @@ import Link from 'next/link'
 import { constructDownloadUrl } from '@/lib/utils'
 import { Input } from '../ui/input'
 import { DialogClose } from '@radix-ui/react-dialog'
+import { renameFile } from '@/lib/actions/file.action'
+import { usePathname } from 'next/navigation'
 
 const ActionDropdown = ({ file }: { file: Models.Document }) => {
+    const pathname= usePathname();
     const [action, setAction] = useState<ActionType | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -42,7 +45,28 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
     }
 
     const handleAction = async() => {
+        if(!action) return;
+        setIsLoading(true);
+        let success = false;
 
+        try {
+            
+            const actions = {
+                rename: () => renameFile({fileId: file.$id , name:name , extension:file.extension , path:pathname}),
+                share: () => console.log("share"),
+                delete: () => console.log("delete"),
+            }
+
+            success = await actions[action.value as keyof typeof actions]();
+            if(success) closeAllModals();
+
+        } 
+        catch (error) {
+            console.log("Error in handleAction in frontend from catch block: ", error);    
+        }
+        finally{
+            setIsLoading(false);
+        }
     }
 
     const renderDialogContent = () => {
@@ -72,7 +96,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
                                 <Button variant="outline" className='cursor-pointer'>Cancel</Button>
                             </DialogClose>
                             {
-                                isLoading ? (<Button className='bg-brand text-black hover:bg-brand-100'><Image src={'/assets/icons/loader.svg'} alt='loader' width={24} height={24} className='animate-spin' /></Button>) : (<Button type="submit" className='cursor-pointer hover:bg-brand bg-brand-100 text-black'>Save changes</Button>)
+                                isLoading ? (<Button className='bg-brand text-black hover:bg-brand-100'><Image src={'/assets/icons/loader.svg'} alt='loader' width={24} height={24} className='animate-spin' /></Button>) : (<Button type="submit" onClick={handleAction} className='cursor-pointer hover:bg-brand bg-brand-100 text-black'>Save changes</Button>)
                             }
                         </DialogFooter>
                     )
