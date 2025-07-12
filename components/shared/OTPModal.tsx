@@ -107,7 +107,7 @@ const OTPModal = ({ email, accountId }: { email: string, accountId: string }) =>
                                     (
                                         <>
                                             Didn't receive OTP?
-                                            <Button onClick={handleResendOTP} type='button' variant={'link'} className='pl-1 text-brand '>
+                                            <Button onClick={handleResendOTP} type='button' variant={'link'} className='pl-1 text-brand cursor-pointer '>
                                                 Click to Resend
                                             </Button>
                                         </>
