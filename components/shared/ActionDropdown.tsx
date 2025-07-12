@@ -24,7 +24,7 @@ import Link from 'next/link'
 import { constructDownloadUrl } from '@/lib/utils'
 import { Input } from '../ui/input'
 import { DialogClose } from '@radix-ui/react-dialog'
-import { renameFile, updateFileUsers } from '@/lib/actions/file.action'
+import { removeFileUsers, renameFile, updateFileUsers } from '@/lib/actions/file.action'
 import { usePathname } from 'next/navigation'
 import { FileDetails, ShareInput } from './ActionDetails'
 
@@ -38,15 +38,18 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
     const [emails, setEmails] = useState<string[]>([]);
 
     const handleRemoveUser = async(email: string) => {
-        console.log('Removing user from share', email)
-        const updatedEmails = emails.filter((e) => e !== email);
-        const success = await updateFileUsers({ fileId: file.$id, emails: updatedEmails, path: pathname });
-        if(success)
-        {
-            setEmails(updatedEmails);
-            closeAllModals();
-            console.log("User removed from share successfully");
+        try {
+            
+            console.log('Removing user from share', email)
+            const success = await removeFileUsers({fileId: file.$id, email, path: pathname});
+            if (success) {
+                setEmails(emails.filter((user) => user !== email));
+                console.log(email , " removed successfully.");
+            }
+        } catch (error) {
+            console.log("Error in handleRemoveUser in frontend from catch block: ", error);
         }
+        
     }
 
 

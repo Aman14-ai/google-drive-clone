@@ -45,7 +45,7 @@ export const uploadFile = async ({ file, ownerId, accountId, path }: UploadFileP
 
 const createQueries = async (currentUser: Models.Document) => {
     try {
-       
+
         const queries = [
             Query.or([
                 Query.equal('owner', [currentUser.$id]),
@@ -59,46 +59,92 @@ const createQueries = async (currentUser: Models.Document) => {
     }
 }
 
-export const getFiles = async() => {
+export const getFiles = async () => {
     try {
-        const {databases} = await createAdminClient();
+        const { databases } = await createAdminClient();
         const currentUser = await getCurrentUser();
-        if(!currentUser)    throw new Error("User not found."); 
+        if (!currentUser) throw new Error("User not found.");
         const queries = await createQueries(currentUser);
-        const files = await databases.listDocuments(appwriteConfig.databaseId , appwriteConfig.filesCollectionId , queries);
+        const files = await databases.listDocuments(appwriteConfig.databaseId, appwriteConfig.filesCollectionId, queries);
         return parseStringify(files);
-    } 
+    }
     catch (error) {
-        handleError(error , "Error in lib/actions/file.action.ts in getFiles function in catch block");    
+        handleError(error, "Error in lib/actions/file.action.ts in getFiles function in catch block");
     }
 }
 
-export const renameFile = async({fileId , name , extension, path}: RenameFileProps) => {
+export const renameFile = async ({ fileId, name, extension, path }: RenameFileProps) => {
     try {
-        const {databases} = await createAdminClient();
+        const { databases } = await createAdminClient();
         const newName = `${name}.${extension}`;
-        const updatedFile = await databases.updateDocument(appwriteConfig.databaseId , appwriteConfig.filesCollectionId , fileId , {name: newName});
+        const updatedFile = await databases.updateDocument(appwriteConfig.databaseId, appwriteConfig.filesCollectionId, fileId, { name: newName });
         revalidatePath(path)
         return parseStringify(updatedFile);
-    } 
+    }
     catch (error) {
         handleError(error, "Error in lib/actions/file.action.ts in renameFile function in catch block");
 
     }
 }
 
-export const updateFileUsers = async ({fileId , emails , path}:UpdateFileUsersProps) => {
+export const updateFileUsers = async ({ fileId, emails, path }: UpdateFileUsersProps) => {
     try {
-        
-        const {databases} = await createAdminClient();
-        const updatedFile = await databases.updateDocument(appwriteConfig.databaseId , appwriteConfig.filesCollectionId , fileId , {
-            users:emails
-        })
-        revalidatePath(path)
-        return parseStringify(updatedFile);
+        const { databases } = await createAdminClient();
 
-    } 
+        // 1. Fetch the current document
+        const existingDoc = await databases.getDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.filesCollectionId,
+            fileId
+        );
+
+        // 2. Merge and deduplicate users
+        const currentUsers = existingDoc.users || [];
+        const updatedUsers = Array.from(new Set([...currentUsers, ...emails]));
+
+        // 3. Update the document
+        const updatedFile = await databases.updateDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.filesCollectionId,
+            fileId,
+            {
+                users: updatedUsers,
+            }
+        );
+
+        // 4. Revalidate path if needed
+        revalidatePath(path);
+        return parseStringify(updatedFile);
+    } catch (error) {
+        handleError(
+            error,
+            "Error in lib/actions/file.action.ts in updateFileUsers function backend in catch block"
+        );
+    }
+};
+
+export const removeFileUsers = async ({ fileId, email, path }: { fileId: string, email: string, path: string }) => {
+    try {
+        const { databases } = await createAdminClient();
+
+        const existingDoc = await databases.getDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.filesCollectionId,
+            fileId
+        );
+        const currentUsersArray = existingDoc.users || [];
+        const updatedUsersArray = currentUsersArray.filter((userEmail:string) => userEmail != email);
+
+        const updatedFile = await databases.updateDocument(
+            appwriteConfig.databaseId, appwriteConfig.filesCollectionId , fileId, {
+                users: updatedUsersArray
+            }
+        )
+
+        revalidatePath(path);
+        return parseStringify(updatedFile);
+    }
     catch (error) {
-        handleError(error, "Error in lib/actions/file.action.ts in updateFileUsers function backend in catch block");    
+        handleError(error, "Error in lib/actions/file.action.ts in removeFileUsers function in catch block");
     }
 }

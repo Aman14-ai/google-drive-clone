@@ -116,37 +116,86 @@ type Props = {
 }
 
 export const ShareInput = ({ file, removeUser, onInputChange }: Props) => {
-  console.log(file)
   return (
-    <>
+    <motion.div 
+      className="flex flex-col gap-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+    >
       <ImageThumbnail file={file} />
-      <div className="share-wrapper">
-        <p className='subtitle-2 pl-1 text-light-100'>Share file with other users</p>
-        <Input
-          type='email'
-          placeholder='Enter email address'
-          onChange={(e) => onInputChange(e.target.value.trim().split(','))}
-          className='share-input-field'
-        />
-        <div className="pt-4">
-          <div className="flex justify-between">
-            <p className='subtitle-2 text-light-100'>Shared with: </p>
-            <p className='subtitle-2 text-light-200'>{file.users.length} users</p>
+      
+      <div className="share-wrapper bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <motion.div
+          className="flex flex-col gap-4"
+          initial={{ y: 10 }}
+          animate={{ y: 0 }}
+        >
+          <p className='subtitle-2 text-gray-700 font-medium'>Share file with other users</p>
+          
+          <Input
+            type='email'
+            placeholder='Enter email address'
+            onChange={(e) => onInputChange(e.target.value.trim().split(','))}
+            className='share-input-field w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all'
+          />
+          
+          <div className="pt-4">
+            <motion.div
+              className="flex justify-between items-center pb-3 border-b border-gray-100"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+            >
+              <p className='subtitle-2 text-gray-600 font-medium'>Shared with:</p>
+              <motion.p
+                className='subtitle-2 text-blue-600 bg-blue-50 px-3 py-1 rounded-full text-sm'
+                whileHover={{ scale: 1.05, backgroundColor: "#dbeafe" }}
+              >
+                {file.users.length} {file.users.length === 1 ? 'user' : 'users'}
+              </motion.p>
+            </motion.div>
+
+            <ul className='pt-3 space-y-2 max-h-50 overflow-y-auto overflow-x-clip custom-scrollbar'>
+              {file.users.map((email: string) => (
+                <motion.li
+                  key={email}
+                  className='flex items-center justify-between gap-2 px-4 py-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors'
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  whileHover={{ x: 3 }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </div>
+                    <p className="subtitle-2 text-gray-800">
+                      {email}
+                    </p>
+                  </div>
+                  <motion.button
+                    onClick={() => removeUser(email)}
+                    className="w-8 cursor-pointer h-8 rounded-full bg-red-50 flex items-center justify-center text-red-400 hover:text-red-600"
+                    whileHover={{ scale: 1.1, backgroundColor: "#fee2e2" }}
+                    whileTap={{ scale: 0.95 }}
+                    title="Remove user"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </motion.button>
+                </motion.li>
+              ))}
+            </ul>
           </div>
-          <ul className='pt-2'>
-            {
-              file.users.map((email: string) => {
-                return (
-                  <li key={email} className='flex items-center justify-between gap-2 px-2' >
-                    <p className="subtitle-2 text-black font-normal!">{email}</p>
-                    <button onClick={() => removeUser(email)} className='cursor-pointer'> <X className='text-light-100 size-5' /> </button>
-                  </li>
-                )
-              })
-            }
-          </ul>
-        </div>
+        </motion.div>
       </div>
-    </>
+    </motion.div>
   )
 }
+
