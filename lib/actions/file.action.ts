@@ -86,3 +86,19 @@ export const renameFile = async({fileId , name , extension, path}: RenameFilePro
 
     }
 }
+
+export const updateFileUsers = async ({fileId , emails , path}:UpdateFileUsersProps) => {
+    try {
+        
+        const {databases} = await createAdminClient();
+        const updatedFile = await databases.updateDocument(appwriteConfig.databaseId , appwriteConfig.filesCollectionId , fileId , {
+            users:emails
+        })
+        revalidatePath(path)
+        return parseStringify(updatedFile);
+
+    } 
+    catch (error) {
+        handleError(error, "Error in lib/actions/file.action.ts in updateFileUsers function backend in catch block");    
+    }
+}

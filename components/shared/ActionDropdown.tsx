@@ -24,17 +24,31 @@ import Link from 'next/link'
 import { constructDownloadUrl } from '@/lib/utils'
 import { Input } from '../ui/input'
 import { DialogClose } from '@radix-ui/react-dialog'
-import { renameFile } from '@/lib/actions/file.action'
+import { renameFile, updateFileUsers } from '@/lib/actions/file.action'
 import { usePathname } from 'next/navigation'
-import { FileDetails } from './ActionDetails'
+import { FileDetails, ShareInput } from './ActionDetails'
 
 const ActionDropdown = ({ file }: { file: Models.Document }) => {
-    const pathname= usePathname();
+    const pathname = usePathname();
     const [action, setAction] = useState<ActionType | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [name, setName] = useState(file.name)
-    const [isLoading , setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [emails, setEmails] = useState<string[]>([]);
+
+    const handleRemoveUser = async(email: string) => {
+        console.log('Removing user from share', email)
+        const updatedEmails = emails.filter((e) => e !== email);
+        const success = await updateFileUsers({ fileId: file.$id, emails: updatedEmails, path: pathname });
+        if(success)
+        {
+            setEmails(updatedEmails);
+            closeAllModals();
+            console.log("User removed from share successfully");
+        }
+    }
+
 
     const closeAllModals = () => {
         setIsModalOpen(false);
@@ -42,30 +56,30 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
         setAction(null);
         setName(file.name);
         setIsLoading(false);
-        // setEmail([]);
+        setEmails([]);
     }
 
-    const handleAction = async() => {
-        if(!action) return;
+    const handleAction = async () => {
+        if (!action) return;
         setIsLoading(true);
         let success = false;
 
         try {
-            
+
             const actions = {
-                rename: () => renameFile({fileId: file.$id , name:name , extension:file.extension , path:pathname}),
-                share: () => console.log("share"),
+                rename: () => renameFile({ fileId: file.$id, name: name, extension: file.extension, path: pathname }),
+                share: () => updateFileUsers({ fileId: file.$id, emails: emails, path: pathname }),
                 delete: () => console.log("delete"),
             }
 
             success = await actions[action.value as keyof typeof actions]();
-            if(success) closeAllModals();
+            if (success) closeAllModals();
 
-        } 
-        catch (error) {
-            console.log("Error in handleAction in frontend from catch block: ", error);    
         }
-        finally{
+        catch (error) {
+            console.log("Error in handleAction in frontend from catch block: ", error);
+        }
+        finally {
             setIsLoading(false);
         }
     }
@@ -90,6 +104,9 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
                     }
                     {
                         value === 'details' && <FileDetails file={file} />
+                    }
+                    {
+                        value === 'share' && <ShareInput removeUser={handleRemoveUser} onInputChange={setEmails} file={file} />
                     }
                 </DialogHeader>
                 {
