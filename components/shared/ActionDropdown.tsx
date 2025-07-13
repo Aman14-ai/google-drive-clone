@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -24,9 +23,9 @@ import Link from 'next/link'
 import { constructDownloadUrl } from '@/lib/utils'
 import { Input } from '../ui/input'
 import { DialogClose } from '@radix-ui/react-dialog'
-import { removeFileUsers, renameFile, updateFileUsers } from '@/lib/actions/file.action'
+import { deleteFile, removeFileUsers, renameFile, updateFileUsers } from '@/lib/actions/file.action'
 import { usePathname } from 'next/navigation'
-import { FileDetails, ShareInput } from './ActionDetails'
+import { DeleteFile, FileDetails, ShareInput } from './ActionDetails'
 import { toast } from 'sonner'
 
 const ActionDropdown = ({ file }: { file: Models.Document }) => {
@@ -38,14 +37,14 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [emails, setEmails] = useState<string[]>([]);
 
-    const handleRemoveUser = async(email: string) => {
+    const handleRemoveUser = async (email: string) => {
         try {
-            
+
             console.log('Removing user from share', email)
-            const success = await removeFileUsers({fileId: file.$id, email, path: pathname});
+            const success = await removeFileUsers({ fileId: file.$id, email, path: pathname });
             if (success) {
                 setEmails(emails.filter((user) => user !== email));
-                console.log(email , " removed successfully.");
+                console.log(email, " removed successfully.");
                 toast.success(`${email} removed successfully.`)
                 return;
             }
@@ -55,7 +54,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
             console.log("Error in handleRemoveUser in frontend from catch block: ", error);
             toast.error("Something went wrong.")
         }
-        
+
     }
 
 
@@ -77,11 +76,16 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
 
             const actions = {
                 rename: () => renameFile({ fileId: file.$id, name: name, extension: file.extension, path: pathname }),
-                share: () => {
-                    let success = updateFileUsers({ fileId: file.$id, emails: emails, path: pathname })
-                    toast.success(`${file.name} is sent to ${emails} successfully.` ) 
+                share: async () => {
+                    let success = await updateFileUsers({ fileId: file.$id, emails: emails, path: pathname })
+                    toast.success(`${file.name} is sent to ${emails} successfully.`)
                 },
-                delete: () => console.log("delete"),
+                delete: async () => {
+                    let success = await deleteFile({ fileId: file.$id, bucketFileId: file.bucketFileId, path: pathname })
+                    console.log(`${file.name} deleted successfully.`)
+                    if (success){ toast.success(`${file.name} deleted successfully.`); closeAllModals()}
+                    else toast.error("Something went wrong.")
+                },
             }
 
             success = await actions[action.value as keyof typeof actions]();
@@ -120,6 +124,11 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
                     {
                         value === 'share' && <ShareInput removeUser={handleRemoveUser} onInputChange={setEmails} file={file} />
                     }
+                    {
+                        value === 'delete' && (
+                            <DeleteFile fileName={file.name} />
+                        )
+                    }
                 </DialogHeader>
                 {
                     ['rename', 'share', 'delete'].includes(value) &&
@@ -129,7 +138,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
                                 <Button variant="outline" className='cursor-pointer'>Cancel</Button>
                             </DialogClose>
                             {
-                                isLoading ? (<Button className='bg-brand text-black hover:bg-brand-100'><Image src={'/assets/icons/loader.svg'} alt='loader' width={24} height={24} className='animate-spin' /></Button>) : (<Button type="submit" onClick={handleAction} className='cursor-pointer hover:bg-brand bg-brand-100 text-black'>Save changes</Button>)
+                                isLoading ? (<Button className='bg-brand-100 text-black hover:bg-brand'><Image src={'/assets/icons/loader.svg'} alt='loader' width={24} height={24} className='animate-spin' /></Button>) : (<Button type="submit" onClick={handleAction} className='cursor-pointer hover:bg-brand bg-brand-100 text-black'>Save changes</Button>)
                             }
                         </DialogFooter>
                     )

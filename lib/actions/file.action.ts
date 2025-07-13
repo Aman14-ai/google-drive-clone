@@ -148,3 +148,20 @@ export const removeFileUsers = async ({ fileId, email, path }: { fileId: string,
         handleError(error, "Error in lib/actions/file.action.ts in removeFileUsers function in catch block");
     }
 }
+
+export const deleteFile = async ({fileId , bucketFileId , path}:DeleteFileProps) => {
+    try {
+        const {storage , databases} = await createAdminClient();    
+        // delete metadata
+        const deletedMetadata = await databases.deleteDocument(appwriteConfig.databaseId , appwriteConfig.filesCollectionId, fileId);
+
+        if(deletedMetadata){
+            await storage.deleteFile(appwriteConfig.bucketId , bucketFileId);
+        }
+        revalidatePath(path);
+        return parseStringify(deletedMetadata);
+    } 
+    catch (error) {
+        handleError(error, "Error in lib/actions/file.action.ts in deleteFile function in catch block");
+    }
+}

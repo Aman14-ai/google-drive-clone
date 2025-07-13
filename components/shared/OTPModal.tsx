@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import {
     AlertDialog,
     AlertDialogAction,
-    AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
     AlertDialogFooter,
@@ -38,12 +37,14 @@ const OTPModal = ({ email, accountId }: { email: string, accountId: string }) =>
             }
             const sessionId = await verifySecret({ accountId, password });
             if (sessionId) {
-                console.log("Session ID from verifySecret in frontend: ", sessionId);
+                //console.log("Session ID from verifySecret in frontend: ", sessionId);
                 console.log("OTP verified successfully, : ");
+                toast.success("OTP verified successfully.");
                 router.push('/'); // Redirect to home page on successful verification
             }
         }
         catch (error) {
+            toast.error("Something went wrong. Please try again later.");
             console.log("Error in OTP verification while handling verify otp in catch block : ", error);
         }
         finally {

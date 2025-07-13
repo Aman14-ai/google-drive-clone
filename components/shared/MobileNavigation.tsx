@@ -3,20 +3,15 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Sheet,
-  SheetClose,
   SheetContent,
-  SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Menu } from 'lucide-react'
-import { Calendar, File, FileText, Home, ImageIcon, Inbox, LayoutDashboard, Orbit, Search, Settings, VideoIcon } from "lucide-react"
+import {   FileText,  ImageIcon,  LayoutDashboard, Orbit,   VideoIcon } from "lucide-react"
 import { cn } from '@/lib/utils'
 import { usePathname } from 'next/navigation'
 import FileUploader from './FileUploader'

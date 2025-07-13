@@ -1,12 +1,10 @@
 import { Models } from 'node-appwrite'
 import React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, } from 'framer-motion'
 import Thumbnail from './Thumbnail'
 import FormattedDateTime from './FormattedDateTime'
 import { convertFileSize, formatDateTime } from '@/lib/utils'
 import { Input } from '../ui/input'
-import { X } from 'lucide-react'
-import { Button } from '../ui/button'
 
 const ImageThumbnail = ({ file }: { file: Models.Document }) => {
   return (
@@ -117,14 +115,14 @@ type Props = {
 
 export const ShareInput = ({ file, removeUser, onInputChange }: Props) => {
   return (
-    <motion.div 
+    <motion.div
       className="flex flex-col gap-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
     >
       <ImageThumbnail file={file} />
-      
+
       <div className="share-wrapper bg-white p-6 rounded-xl shadow-sm border border-gray-100">
         <motion.div
           className="flex flex-col gap-4"
@@ -132,14 +130,14 @@ export const ShareInput = ({ file, removeUser, onInputChange }: Props) => {
           animate={{ y: 0 }}
         >
           <p className='subtitle-2 text-gray-700 font-medium'>Share file with other users</p>
-          
+
           <Input
             type='email'
             placeholder='Enter email address'
             onChange={(e) => onInputChange(e.target.value.trim().split(','))}
             className='share-input-field w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-all'
           />
-          
+
           <div className="pt-4">
             <motion.div
               className="flex justify-between items-center pb-3 border-b border-gray-100"
@@ -199,3 +197,38 @@ export const ShareInput = ({ file, removeUser, onInputChange }: Props) => {
   )
 }
 
+export const DeleteFile = ({fileName}: {fileName: string}) => {
+  return (
+    <div className="p-4 bg-white rounded-lg border border-red-200 shadow-sm max-w-md mx-auto">
+      <div className="flex flex-col items-center gap-2 text-center">
+        {/* Warning icon (simplified) */}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6 text-red-500"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
+        </svg>
+
+        {/* Bold heading */}
+        <h3 className="text-lg font-medium text-gray-800">
+          Delete this file permanently?
+        </h3>
+
+        {/* Highlighted filename + subtle warning */}
+        <p className="text-gray-600">
+          "<span className="font-semibold text-red-600">{fileName}</span>" will be deleted.
+          <br />
+          <span className="text-sm text-red-500">This cannot be undone.</span>
+        </p>
+      </div>
+    </div>
+  )
+}

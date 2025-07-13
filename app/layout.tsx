@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css";
-import { SidebarProvider } from "@/components/ui/sidebar";
 
 const poppins = Poppins({
   subsets: ["latin"],

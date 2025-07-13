@@ -1,8 +1,7 @@
 'use client'
 import React, { useState } from 'react'
-import Image from 'next/image'
 import { motion } from "framer-motion";
-import { FiMail, FiUser, FiLock, FiLoader } from "react-icons/fi";
+import { FiMail, FiUser, FiLoader } from "react-icons/fi";
 import Link from 'next/link'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -10,11 +9,8 @@ import { useForm } from 'react-hook-form'
 import { Button } from '../ui/button'
 import {
   Form,
-  FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
