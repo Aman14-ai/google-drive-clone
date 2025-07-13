@@ -156,7 +156,7 @@ export const ShareInput = ({ file, removeUser, onInputChange }: Props) => {
               </motion.p>
             </motion.div>
 
-            <ul className='pt-3 space-y-2 max-h-50 overflow-y-auto overflow-x-clip custom-scrollbar'>
+            <ul className='pt-3 max-w-[300px] overflow-x-auto overflow-y-auto max-h-50 space-y-2 custom-scrollbar scrollbar-hide'>
               {file.users.map((email: string) => (
                 <motion.li
                   key={email}

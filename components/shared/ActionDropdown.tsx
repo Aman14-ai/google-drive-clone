@@ -27,6 +27,7 @@ import { DialogClose } from '@radix-ui/react-dialog'
 import { removeFileUsers, renameFile, updateFileUsers } from '@/lib/actions/file.action'
 import { usePathname } from 'next/navigation'
 import { FileDetails, ShareInput } from './ActionDetails'
+import { toast } from 'sonner'
 
 const ActionDropdown = ({ file }: { file: Models.Document }) => {
     const pathname = usePathname();
@@ -45,9 +46,14 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
             if (success) {
                 setEmails(emails.filter((user) => user !== email));
                 console.log(email , " removed successfully.");
+                toast.success(`${email} removed successfully.`)
+                return;
             }
+            toast.error("Something went wrong.");
+
         } catch (error) {
             console.log("Error in handleRemoveUser in frontend from catch block: ", error);
+            toast.error("Something went wrong.")
         }
         
     }
@@ -71,7 +77,10 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
 
             const actions = {
                 rename: () => renameFile({ fileId: file.$id, name: name, extension: file.extension, path: pathname }),
-                share: () => updateFileUsers({ fileId: file.$id, emails: emails, path: pathname }),
+                share: () => {
+                    let success = updateFileUsers({ fileId: file.$id, emails: emails, path: pathname })
+                    toast.success(`${file.name} is sent to ${emails} successfully.` ) 
+                },
                 delete: () => console.log("delete"),
             }
 
