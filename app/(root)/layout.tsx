@@ -5,6 +5,7 @@ import MobileNavigation from "@/components/shared/MobileNavigation";
 import Header from "@/components/shared/Header";
 import { getCurrentUser } from "@/lib/actions/user.action";
 import { redirect } from "next/navigation";
+import Search from "@/components/shared/Search";
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
 
@@ -20,6 +21,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                 {/* <SidebarTrigger className="block md:hidden lg:hidden "  />     */}
                 <div className=" w-full">
                     <MobileNavigation {...currentUser} />
+                    <div className='md:hidden  w-full z-50 my-2'>
+                        <Search />
+                    </div>
                     <Header userId={currentUser.$id} accountId={currentUser.accountId}  />
                     <div className="main-content">{children}</div>
                 </div>
