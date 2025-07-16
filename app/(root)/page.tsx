@@ -1,7 +1,8 @@
+export const dynamic = 'force-dynamic';
+
 import Image from "next/image";
 import Link from "next/link";
 import { Models } from "node-appwrite";
-
 import { Separator } from "@/components/ui/separator";
 import { convertFileSize, getUsageSummary } from "@/lib/utils";
 import { Chart } from "@/components/shared/Chart";
@@ -11,7 +12,6 @@ import ActionDropdown from "@/components/shared/ActionDropdown";
 import { getFiles, getTotalSpaceUsed } from "@/lib/actions/file.action";
 
 const Dashboard = async () => {
-  // Parallel requests
   const [files, totalSpace] = await Promise.all([
     getFiles({ types: [], limit: 10 }),
     getTotalSpaceUsed(),

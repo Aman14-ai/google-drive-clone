@@ -1,5 +1,6 @@
-import AuthForm from '@/components/shared/AuthForm'
-import { getCurrentUser } from '@/lib/actions/user.action'
+export const dynamic = 'force-dynamic';
+
+import AuthForm from '@/components/shared/AuthForm' 
 import React from 'react'
 
 const page = async() => {
